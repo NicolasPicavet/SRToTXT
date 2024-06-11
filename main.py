@@ -26,9 +26,13 @@ def browseFilesClick(event):
   plural = "s"
   if len(srtFileNames) == 1:
     plural = ""
+  if len(srtFileNames) >= 1:
+    wipLabel.config(text="⌛")
+    numberProcessedLabel.config(text="0 file processed")
+  else:
+    wipLabel.config(text="")
+    numberProcessedLabel.config(text="")
   numberSelectedLabel.config(text=str(len(srtFileNames)) + " file" + plural + " selected")
-  wipLabel.config(text="⌛")
-  numberProcessedLabel.config(text="0 file processed")
 
   for filename in srtFileNames:
     if filename != "":
