@@ -17,7 +17,7 @@ def browseFilesClick(event):
     initialdir = os.getcwd(),
     title = "Select one or multiple file",
     filetypes = (
-                  ("SRT files", "*.srt*"),
+                  ("SRT files", "*.srt"),
                   ("all files", "*.*")
                 ))
   
