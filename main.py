@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 
-githubURL = "https://github.com/NicolasPicavet"
+githubURL = "https://github.com/NicolasPicavet/SRToTXT"
 
 
 def browseFilesClick(event):
