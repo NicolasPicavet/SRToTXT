@@ -1,5 +1,6 @@
 import os
 import webbrowser
+import re
 
 import tkinter as tk
 from tkinter import filedialog
@@ -19,41 +20,37 @@ def browseFilesClick(event):
   event.widget.after(0, lambda: event.widget.config(relief=tk.RAISED))
   for filename in srtFileNames:
     if filename != "":
-      parse(filename, entryNumberVar.get(), timeStampVar.get(), textVar.get())
+      parse(filename, entryNumberVar.get(), timestampVar.get(), textVar.get())
       listOutputs.insert(srtFileNames.index(filename), filename + " ==> " + filename + ".txt")
     
 def githubClick(event):
   webbrowser.open(githubURL, new=0, autoraise=True)
 
-def parse(srtFileName, keepEntryNumber, keepTimeStamp, keepText):
+def parse(srtFileName, keepEntryNumber, keepTimestamp, keepText):
   try:
     srtFile = open(srtFileName, "r")
   except FileNotFoundError:
     exit("[" + srtFile + "] : file not found")
   outputFile = open(srtFileName + ".txt", "w")
 
-  currentEntry = 0
   for line in srtFile:
-    currentEntry += 1
-    arrowIndex = line.find("-->")
-    endTimeStampIndex = arrowIndex + 16
-    if arrowIndex > 0:
-      entryNumber = line[:line.find(" ")]
-      if not keepTimeStamp:
-        line = entryNumber + "\n" + line[endTimeStampIndex:]
-      else :
-        line = line[:endTimeStampIndex] + "\n" + line[endTimeStampIndex:].strip()
-      if not keepText:
-        line = line[:endTimeStampIndex]
-      if not keepEntryNumber:
-        line = line[line.find(" "):]
     line = line.strip()
-    if line and not (arrowIndex == -1 and not keepText):
-      outputFile.write(line + "\n")
+    if re.search("^[0-9]", line):
+      if line.find(":") == -1:
+        if not keepEntryNumber:
+          continue
+      else:
+        if not keepTimestamp:
+          continue
+    elif not line:
+      continue
+    if not keepText:
+      continue
+    outputFile.write(line + "\n")
 
 
 window = tk.Tk()
-window.title("SRToTXT 1.0 - Nicolas Picavet")
+window.title("SRToTXT 1.1 - Nicolas Picavet")
 window.resizable(0,0)
 
 
@@ -66,9 +63,9 @@ oneLabel.grid(column=0, row=0, padx=5, pady=2, rowspan=3)
 entryNumberVar = tk.BooleanVar(value=False)
 entryNumberCheckButton = tk.Checkbutton(firstRowFrame, text='Keep entry number',variable=entryNumberVar, onvalue=True, offvalue=False)
 entryNumberCheckButton.grid(column=1, row=0, sticky=tk.W, padx=5, pady=2)
-timeStampVar = tk.BooleanVar(value=False)
-timeStampCheckButton = tk.Checkbutton(firstRowFrame, text='Keep timestamp',variable=timeStampVar, onvalue=True, offvalue=False)
-timeStampCheckButton.grid(column=1, row=1, sticky=tk.W, padx=5, pady=2)
+timestampVar = tk.BooleanVar(value=False)
+timestampCheckButton = tk.Checkbutton(firstRowFrame, text='Keep timestamp',variable=timestampVar, onvalue=True, offvalue=False)
+timestampCheckButton.grid(column=1, row=1, sticky=tk.W, padx=5, pady=2)
 textVar = tk.BooleanVar(value=True)
 textCheckButton = tk.Checkbutton(firstRowFrame, text='Keep text',variable=textVar, onvalue=True, offvalue=False)
 textCheckButton.grid(column=1, row=2, sticky=tk.W, padx=5, pady=2)
