@@ -1,2 +1,7 @@
 *.srt
 *.txt
+
+dist
+build
+__pycache__
+main.spec
