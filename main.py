@@ -1,6 +1,7 @@
 import os
 import webbrowser
 import re
+import codecs
 
 import tkinter as tk
 from tkinter import filedialog
@@ -28,10 +29,10 @@ def githubClick(event):
 
 def parse(srtFileName, keepEntryNumber, keepTimestamp, keepText):
   try:
-    srtFile = open(srtFileName, "r")
+    srtFile = codecs.open(srtFileName, "r", "utf-8-sig")
   except FileNotFoundError:
     exit("[" + srtFile + "] : file not found")
-  outputFile = open(srtFileName + ".txt", "w")
+  outputFile = codecs.open(srtFileName + ".txt", "w", "utf-8-sig")
 
   for line in srtFile:
     line = line.strip()
@@ -47,6 +48,9 @@ def parse(srtFileName, keepEntryNumber, keepTimestamp, keepText):
     if not keepText:
       continue
     outputFile.write(line + "\n")
+
+  srtFile.close()
+  outputFile.close()
 
 
 window = tk.Tk()
