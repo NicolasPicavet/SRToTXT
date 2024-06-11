@@ -11,6 +11,8 @@ githubURL = "https://github.com/NicolasPicavet/SRToTXT"
 
 
 def browseFilesClick(event):
+  numberOfProcessedFiles = 0
+
   srtFileNames = filedialog.askopenfilenames(
     initialdir = os.getcwd(),
     title = "Select one or multiple file",
@@ -18,11 +20,32 @@ def browseFilesClick(event):
                   ("SRT files", "*.srt*"),
                   ("all files", "*.*")
                 ))
+  
+  listOutputs.delete(0,tk.END)
   event.widget.after(0, lambda: event.widget.config(relief=tk.RAISED))
+  plural = "s"
+  if len(srtFileNames) == 1:
+    plural = ""
+  numberSelectedLabel.config(text=str(len(srtFileNames)) + " file" + plural + " selected")
+  wipLabel.config(text="⌛")
+  numberProcessedLabel.config(text="0 file processed")
+
   for filename in srtFileNames:
     if filename != "":
+      window.update_idletasks()
+
       parse(filename, entryNumberVar.get(), timestampVar.get(), textVar.get())
+      
       listOutputs.insert(srtFileNames.index(filename), filename + " ==> " + filename + ".txt")
+
+      numberOfProcessedFiles += 1
+      if numberOfProcessedFiles == len(srtFileNames):
+        wipLabel.config(text="✅")
+      plural = "s"
+      if numberOfProcessedFiles == 1:
+        plural = ""
+      numberProcessedLabel.config(text=str(numberOfProcessedFiles) + " file" + plural + " processed")
+
     
 def githubClick(event):
   webbrowser.open(githubURL, new=0, autoraise=True)
@@ -65,13 +88,13 @@ oneLabel = tk.Label(firstRowFrame, text="1", font=(None, 28))
 oneLabel.grid(column=0, row=0, padx=5, pady=2, rowspan=3)
 
 entryNumberVar = tk.BooleanVar(value=False)
-entryNumberCheckButton = tk.Checkbutton(firstRowFrame, text='Keep entry number',variable=entryNumberVar, onvalue=True, offvalue=False)
+entryNumberCheckButton = tk.Checkbutton(firstRowFrame, text='Keep entry number', variable=entryNumberVar, onvalue=True, offvalue=False)
 entryNumberCheckButton.grid(column=1, row=0, sticky=tk.W, padx=5, pady=2)
 timestampVar = tk.BooleanVar(value=False)
-timestampCheckButton = tk.Checkbutton(firstRowFrame, text='Keep timestamp',variable=timestampVar, onvalue=True, offvalue=False)
+timestampCheckButton = tk.Checkbutton(firstRowFrame, text='Keep timestamp', variable=timestampVar, onvalue=True, offvalue=False)
 timestampCheckButton.grid(column=1, row=1, sticky=tk.W, padx=5, pady=2)
 textVar = tk.BooleanVar(value=True)
-textCheckButton = tk.Checkbutton(firstRowFrame, text='Keep text',variable=textVar, onvalue=True, offvalue=False)
+textCheckButton = tk.Checkbutton(firstRowFrame, text='Keep text', variable=textVar, onvalue=True, offvalue=False)
 textCheckButton.grid(column=1, row=2, sticky=tk.W, padx=5, pady=2)
 
 twoLabel = tk.Label(firstRowFrame, text="2", font=(None, 28))
@@ -80,6 +103,15 @@ twoLabel.grid(column=2, row=0, padx=(25, 5), pady=2, rowspan=3)
 browseButton = tk.Button(firstRowFrame, text="Browse SRT files")
 browseButton.bind("<Button-1>", browseFilesClick)
 browseButton.grid(column=3, row=0, padx=5, pady=5, rowspan=3)
+
+numberSelectedLabel = tk.Label(firstRowFrame, text="")
+numberSelectedLabel.grid(column=4, row=1, sticky=tk.W, padx=2, pady=0)
+
+numberProcessedLabel = tk.Label(firstRowFrame, text="")
+numberProcessedLabel.grid(column=4, row=2, sticky=tk.W, padx=2, pady=0)
+
+wipLabel = tk.Label(firstRowFrame, text="", font=(None, 12))
+wipLabel.grid(column=5, row=2, sticky=tk.W, padx=5, pady=2)
 
 
 secondRowFrame = tk.Frame(window)
